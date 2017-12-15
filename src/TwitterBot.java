@@ -11,7 +11,8 @@ public class TwitterBot {
 		// TODO Auto-generated method stub
 		// The factory instance is re-useable and thread safe.
         Twitter twitter = TwitterFactory.getSingleton();
-        Query query = new Query("source:twitter4j yusukey");
+        Query query = new Query("Lucas test");
+        query.setCount(5);
         QueryResult result = null;
         try {
             result = twitter.search(query);
