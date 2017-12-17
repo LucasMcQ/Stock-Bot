@@ -18,11 +18,28 @@ public class TwitterBot {
 
 	public static void main(String[] args) {
 
-		// TODO Auto-generated method stub
-		// The factory instance is re-useable and thread safe.
-		Twitter twitter = TwitterFactory.getSingleton();
-		Query query = new Query(HASH_TAG_KEY);
-		QueryResult result = null;
+		searchTweets();
+
+	}
+	
+
+	
+	/* Method: searchTweets()
+	 * 
+	 * Description: This will search all of the tweets on twitter looking for a hashtag key.
+	 * When the bot finds the hashtag "#pricebot" it will send the tweet to the examineStock()
+	 * method where it will extract the stock information by the stock that was found in the
+	 * tweet.
+	 * 
+	 */
+
+	private static void searchTweets() {
+
+		Twitter twitter = TwitterFactory.getSingleton(); // All tweets
+		Query query = new Query(HASH_TAG_KEY); // tweets containing a substring
+		QueryResult result = null; // all of the tweets containing the substring we are looking for
+		
+		
 		try {
 			result = twitter.search(query);
 		} catch (TwitterException e) {
@@ -30,11 +47,10 @@ public class TwitterBot {
 			e.printStackTrace();
 		}
 		
+		
 		String stockName = null; // the name of the stock
 		
 		for (Status status : result.getTweets()) {
-			
-
 
 			String tweet = status.getText(); // the current tweet as a string
 
@@ -45,25 +61,53 @@ public class TwitterBot {
 				stockName = parseStockName(tweet);
 				
 				if (stockName != null) {
-					
-					Stock stock = null; // the stock information
-					try {
-						stock = YahooFinance.get(stockName);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 
-					BigDecimal price = stock.getQuote().getPrice(); // the price of the stock
+					examineStock(stockName);
 
-					System.out.println("STOCK NAME: " + stockName + " price = " + price);
-					
 				}
 			}
 
 		}
+		
 	}
+	
+	
+	
+	/* Method: examineStock()
+	 * @param stockName -- the name of the stock
+	 * 
+	 * Description: This will do operations with the name of the stock passed in.
+	 * This method will print out the current price of the stock.
+	 * 
+	 */
 
+	private static void examineStock(String stockName) {
+		
+		Stock stock = null; // the stock information
+		try {
+			stock = YahooFinance.get(stockName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		BigDecimal price = stock.getQuote().getPrice(); // the price of the stock
+
+		System.out.println("STOCK NAME: " + stockName + " price = " + price);
+		
+	}
+	
+	
+	
+	/* Method: parseStockName()
+	 * @param tweet -- the contents of the tweet
+	 * 
+	 * 
+	 * Description: This will parse the name of the stock out of the tweet, and return
+	 * the name of the stock that we will do operations on.
+	 * 
+	 */
+	
 	private static String parseStockName(String tweet) {
 
 		StringTokenizer st = new StringTokenizer(tweet); // tokenizes the tweet so we can separate key hashtag from stock name
@@ -82,4 +126,5 @@ public class TwitterBot {
 		return null;
 
 	}
+	
 }
