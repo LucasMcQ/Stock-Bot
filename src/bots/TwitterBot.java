@@ -74,7 +74,7 @@ public class TwitterBot {
 			System.out.println(status.getText());
 
 			// if the tweet is a pricebot request
-			if (tweet.contains("#pricebot")) {
+			if (tweet.contains(HASH_TAG_KEY)) {
 				stockName = parseStockName(tweet);
 				
 				if (stockName != null) {
