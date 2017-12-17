@@ -12,6 +12,23 @@ import twitter4j.TwitterFactory;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
+
+/* Class: TwitterBot
+ * 
+ * This twitter bot will search all of twitter looking for tweets with the hashtag '#pricebot'
+ * when a user types in that hashtag and a stock name next to it, this program will reply to
+ * the user that posted the tweet with the current price of the stock.
+ * 
+ * EX:
+ * The user tweets:
+ * 	GOOGL #pricebot
+ * 
+ * The program will then reply to the user with the current price of the stock google.
+ * 
+ * 
+ * 
+ */
+
 public class TwitterBot {
 
 	private static final String HASH_TAG_KEY = "#pricebot";
