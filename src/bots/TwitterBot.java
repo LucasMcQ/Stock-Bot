@@ -29,11 +29,14 @@ public class TwitterBot {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		String stockName = null; // the name of the stock
+		
 		for (Status status : result.getTweets()) {
 			
-			String stockName = null;
 
-			String tweet = status.getText();
+
+			String tweet = status.getText(); // the current tweet as a string
 
 			System.out.println(status.getText());
 
@@ -41,8 +44,9 @@ public class TwitterBot {
 			if (tweet.contains("#pricebot")) {
 				stockName = parseStockName(tweet);
 				
-				if (stockName.length() > 0) {
-					Stock stock = null;
+				if (stockName != null) {
+					
+					Stock stock = null; // the stock information
 					try {
 						stock = YahooFinance.get(stockName);
 					} catch (IOException e) {
@@ -50,9 +54,10 @@ public class TwitterBot {
 						e.printStackTrace();
 					}
 
-					BigDecimal price = stock.getQuote().getPrice();
+					BigDecimal price = stock.getQuote().getPrice(); // the price of the stock
 
 					System.out.println("STOCK NAME: " + stockName + " price = " + price);
+					
 				}
 			}
 
@@ -62,21 +67,19 @@ public class TwitterBot {
 	private static String parseStockName(String tweet) {
 
 		StringTokenizer st = new StringTokenizer(tweet); // tokenizes the tweet so we can separate key hashtag from stock name
-		String stockName = ""; // the name of the stock to look up
-
+		
 		while (st.hasMoreTokens()) {
 
 			String token = st.nextToken(); // the tokenized string
 
 			// if the token is not the hash key, it will be the stock name
 			if (!token.equals(HASH_TAG_KEY)) {
-				stockName = token;
-				break;
+				return token;
 			}
 
 		}
 		
-		return stockName;
+		return null;
 
 	}
 }
