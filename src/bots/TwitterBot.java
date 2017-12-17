@@ -1,3 +1,6 @@
+package bots;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.StringTokenizer;
 
 import twitter4j.Query;
@@ -6,6 +9,8 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
 
 public class TwitterBot {
 
@@ -35,7 +40,20 @@ public class TwitterBot {
 			// if the tweet is a pricebot request
 			if (tweet.contains("#pricebot")) {
 				stockName = parseStockName(tweet);
-				System.out.println("STOCK NAME: " + stockName);
+				
+				if (stockName.length() > 0) {
+					Stock stock = null;
+					try {
+						stock = YahooFinance.get(stockName);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					BigDecimal price = stock.getQuote().getPrice();
+
+					System.out.println("STOCK NAME: " + stockName + " price = " + price);
+				}
 			}
 
 		}
