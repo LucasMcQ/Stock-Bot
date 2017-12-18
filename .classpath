@@ -2,6 +2,14 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/cam/Documents/dev/twitter4j-4.0.4/lib/twitter4j-core-4.0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/cam/Documents/dev/Hack-AZ-2017/jars/com.fasterxml.jackson.databind.jar"/>
+	<classpathentry kind="lib" path="C:/Users/cam/Documents/dev/Hack-AZ-2017/jars/jackson-annotations-2.1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/cam/Documents/dev/Hack-AZ-2017/jars/jackson-core-2.2.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/cam/Documents/dev/Hack-AZ-2017/jars/slf4j-api-1.6.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/cam/Documents/dev/Hack-AZ-2017/jars/slf4j-simple-1.6.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/cam/Documents/dev/Hack-AZ-2017/jars/twitter4j-core-4.0.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/cam/Documents/dev/Hack-AZ-2017/jars/YahooFinanceAPI-3.12.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/cam/Documents/dev/Hack-AZ-2017/jars/YahooFinanceAPI-3.12.3-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/cam/Documents/dev/Hack-AZ-2017/jars/YahooFinanceAPI-3.12.3-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
