@@ -78,7 +78,9 @@ public class TwitterBot {
 				stockName = parseStockName(tweet);
 				
 				if (stockName != null) {
+
 					examineStock(stockName);
+
 				}
 			}
 
