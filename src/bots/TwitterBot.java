@@ -78,26 +78,25 @@ public class TwitterBot {
 				stockName = parseStockName(tweet);
 				
 				if (stockName != null) {
-
-					String reply = examineStock(stockName);
-					replyTweet(twitter, reply);
+					
+					String username = status.getUser().getScreenName();
+					String finalTweet = examineStock(stockName, username);
+					replyTweet(twitter, finalTweet);
 
 				}
 			}
-
-		}
-		
+		}	
 	}
 	
 	/**
 	 * Replies to a tweet with stock name and price.
 	 *
 	 *@param twitter the twitterfactory instance
-	 *@param reply the string to reply with
+	 *@param tweet the string to reply with
 	 */
-	private static void replyTweet(Twitter twitter, String reply) {
+	private static void replyTweet(Twitter twitter, String tweet) {
 		try {
-			twitter.updateStatus(reply);
+			twitter.updateStatus(tweet);
 		} catch (TwitterException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -109,10 +108,9 @@ public class TwitterBot {
 	 * 
 	 * Description: This will do operations with the name of the stock passed in.
 	 * This method will print out the current price of the stock.
-	 * 
 	 */
 
-	private static String examineStock(String stockName) {
+	private static String examineStock(String stockName, String username) {
 		
 		Stock stock = null; // the stock information
 		try {
@@ -124,7 +122,7 @@ public class TwitterBot {
 
 		BigDecimal price = stock.getQuote().getPrice(); // the price of the stock
 
-		return "STOCK NAME: " + stockName + " price = $" + price;
+		return "@" + username + " STOCK NAME: " + stockName + " price = $" + price;
 	}
 	
 	
