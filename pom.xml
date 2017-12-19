@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>com.yahoofinance-api</groupId>
 			<artifactId>YahooFinanceAPI</artifactId>
-			<version>3.5.0</version>
+			<version>3.12.3</version>
 		</dependency>
 
 	</dependencies>
