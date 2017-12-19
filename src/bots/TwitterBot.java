@@ -1,7 +1,9 @@
 package bots;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 
 import twitter4j.Query;
 import twitter4j.QueryResult;
@@ -32,10 +34,22 @@ import yahoofinance.YahooFinance;
 public class TwitterBot {
 
 	private static final String HASH_TAG_KEY = "#pricebot";
+	private static ArrayList<String> allResponses = new ArrayList<String>();
 
 	public static void main(String[] args) {
 
-		searchTweets();
+		while(true) {
+			
+			searchTweets();
+			
+			// Sleep for 15 seconds so Twitter does not get mad at us for API request
+			try {
+				TimeUnit.SECONDS.sleep(15);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 	}
 	
@@ -81,7 +95,13 @@ public class TwitterBot {
 					
 					String username = status.getUser().getScreenName();
 					String finalTweet = examineStock(stockName, username);
-					replyTweet(twitter, finalTweet);
+					
+					// if the final tweet returned null, the tweet has already been sent
+					// so we will skip. If not null its a new stock price, so we will 
+					// make a tweet with the stock name.
+					if(finalTweet != null) {
+						replyTweet(twitter, finalTweet);
+					}
 
 				}
 			}
@@ -121,8 +141,19 @@ public class TwitterBot {
 		}
 
 		BigDecimal price = stock.getQuote().getPrice(); // the price of the stock
+		
+		String response = "@" + username + " STOCK NAME: " + stockName + " price = $" + price; 
 
-		return "@" + username + " STOCK NAME: " + stockName + " price = $" + price;
+		// If the response is already in the list, we will not tweet to them.
+		if(allResponses.contains(response)) {
+			return null;
+		}
+		
+		// add the response to the array list to keep track of the username replied and the stock price.
+		allResponses.add(response);
+		
+		return response;
+		
 	}
 	
 	
