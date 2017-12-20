@@ -28,59 +28,45 @@ import yahoofinance.YahooFinance;
  * 	GOOGL #pricebot
  * 
  * The program will then reply to the user with the current price of the stock google.
- * 
- * 
- * 
  */
-
 public class TwitterBot {
 
 	private static final String HASH_TAG_KEY = "#pricebot";
 	private static final String PERSISTENT_TWEETS_FILE = "persistentTweets.txt";
 	private static ArrayList<Long> allResponses = new ArrayList<Long>();
 
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) {	
 		// We will check if there is a file with previous tweets to read from.
 		// If there is a file, we will read that file into the allResponses list.
 		File file = new File(PERSISTENT_TWEETS_FILE);
 		if(file.exists()) {
 			allResponses = PersistentTweets.readTweets(PERSISTENT_TWEETS_FILE);
 		}
-
-		while(true) {
-			
-			searchTweets();
-			
+		
+		while(true) {		
+			searchTweets();		
 			// Sleep for 15 seconds so Twitter does not get mad at us for API request
 			try {
-				TimeUnit.SECONDS.sleep(15);
-				
+				TimeUnit.SECONDS.sleep(15);			
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-
 	}
 	
 
 	
-	/* Method: searchTweets()
-	 * 
-	 * Description: This will search all of the tweets on twitter looking for a hashtag key.
-	 * When the bot finds the hashtag "#pricebot" it will send the tweet to the examineStock()
-	 * method where it will extract the stock information by the stock that was found in the
-	 * tweet.
+	/**
+	 * Searches tweets looking for HASH_TAG_KEY. If the key is found, the stockname
+	 * is parsed and the tweet ID is added to file. The bot's reply tweet is then
+	 * created and tweeted as a reply to the user who summoned the bot.
 	 * 
 	 */
-
-	private static void searchTweets() {
-
+	private static void searchTweets() {	
 		Twitter twitter = TwitterFactory.getSingleton(); // All tweets
 		Query query = new Query(HASH_TAG_KEY); // tweets containing a substring
 		QueryResult result = null; // all of the tweets containing the substring we are looking for
-		
 		
 		try {
 			result = twitter.search(query);
@@ -89,14 +75,11 @@ public class TwitterBot {
 			e.printStackTrace();
 		}
 		
-		
 		String stockName = null; // the name of the stock
 		
 		for (Status status : result.getTweets()) {
-
 			String tweet = status.getText(); // the current tweet as a string
-
-			System.out.println(tweet);
+			//System.out.println(tweet);
 
 			// if the tweet is a pricebot request
 			if (tweet.contains(HASH_TAG_KEY)) {
@@ -119,10 +102,8 @@ public class TwitterBot {
 						
 						String finalTweet = examineStock(stockName, username);
 						// Reply to the user with the stock price.
-						replyTweet(twitter, finalTweet);
-						
+						replyTweet(twitter, finalTweet);	
 					}
-
 				}
 			}
 		}	
@@ -143,16 +124,19 @@ public class TwitterBot {
 		}
 	}
 	
-	/* Method: examineStock()
-	 * @param stockName -- the name of the stock
+	/**
+	 * Returns a string that will be the reply tweet to the user who
+	 * summoned the bot. If the original tweet does not contain a valid
+	 * stockname, an error message is tweeted instead.
 	 * 
-	 * Description: This will do operations with the name of the stock passed in.
-	 * This method will print out the current price of the stock.
+	 * @param  stockName the name of the stock referenced in the original tweet
+	 * @param  username  the username of the person who summoned the bot
+	 * @return           the reply tweet
 	 */
 
 	private static String examineStock(String stockName, String username) {
-		
 		Stock stock = null; // the stock information
+		
 		try {
 			stock = YahooFinance.get(stockName);
 		} catch (IOException e) {
@@ -161,42 +145,32 @@ public class TwitterBot {
 			//e.printStackTrace();
 		}
 
-		BigDecimal price = stock.getQuote().getPrice(); // the price of the stock
-		
-		String response =  stockName + " is $" + price + "   @" + username; 
-		
+		BigDecimal price = stock.getQuote().getPrice(); // the price of the stock		
+		String response =  stockName + " is $" + price + "   @" + username; 		
 		return response;
-		
 	}
 	
 	
 	
-	/* Method: parseStockName()
-	 * @param tweet -- the contents of the tweet
+	/**
+	 * Returns the parsed stockname from the original tweet
 	 * 
-	 * 
-	 * Description: This will parse the name of the stock out of the tweet, and return
-	 * the name of the stock that we will do operations on.
-	 * 
+	 * @param  tweet the orignal tweet that contains hashtag key
+	 * @return       the name of the stock referenced in tweet
 	 */
 	
 	private static String parseStockName(String tweet) {
-
 		StringTokenizer st = new StringTokenizer(tweet); // tokenizes the tweet so we can separate key hashtag from stock name
 		
 		while (st.hasMoreTokens()) {
-
 			String token = st.nextToken(); // the tokenized string
 
 			// if the token is not the hash key, it will be the stock name
 			if (!token.equals(HASH_TAG_KEY)) {
 				return token;
 			}
-
 		}
-		
 		return null;
-
 	}
 	
 }
