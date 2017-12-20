@@ -157,7 +157,8 @@ public class TwitterBot {
 			stock = YahooFinance.get(stockName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return "Sorry, I could not find a stock named " + stockName + " @" + username;
+			//e.printStackTrace();
 		}
 
 		BigDecimal price = stock.getQuote().getPrice(); // the price of the stock
