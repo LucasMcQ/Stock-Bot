@@ -1,10 +1,12 @@
 package bots;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
+import persistent.PersistentTweets;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
@@ -34,9 +36,17 @@ import yahoofinance.YahooFinance;
 public class TwitterBot {
 
 	private static final String HASH_TAG_KEY = "#pricebot";
-	private static ArrayList<String> allResponses = new ArrayList<String>();
+	private static final String PERSISTENT_TWEETS_FILE = "persistentTweets.txt";
+	private static ArrayList<Long> allResponses = new ArrayList<Long>();
 
 	public static void main(String[] args) {
+		
+		// We will check if there is a file with previous tweets to read from.
+		// If there is a file, we will read that file into the allResponses list.
+		File file = new File(PERSISTENT_TWEETS_FILE);
+		if(file.exists()) {
+			allResponses = PersistentTweets.readTweets(PERSISTENT_TWEETS_FILE);
+		}
 
 		while(true) {
 			
@@ -45,6 +55,7 @@ public class TwitterBot {
 			// Sleep for 15 seconds so Twitter does not get mad at us for API request
 			try {
 				TimeUnit.SECONDS.sleep(15);
+				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -93,14 +104,23 @@ public class TwitterBot {
 				
 				if (stockName != null) {
 					
-					String username = status.getUser().getScreenName();
-					String finalTweet = examineStock(stockName, username);
+					String username = status.getUser().getScreenName(); // the username of the person tweeting
+					long id = status.getId(); // the id of the tweet
 					
-					// if the final tweet returned null, the tweet has already been sent
-					// so we will skip. If not null its a new stock price, so we will 
-					// make a tweet with the stock name.
-					if(finalTweet != null) {
+					// If the current tweet has not been responded to, we will tweet to them
+					// the price of their desired stock.
+					if(!allResponses.contains(id)) {
+						
+						// add the tweet id to the list
+						allResponses.add(id);
+						
+						// We will write the list to a file named persistentTweets.txt
+						PersistentTweets.writeTweets(allResponses, PERSISTENT_TWEETS_FILE);
+						
+						String finalTweet = examineStock(stockName, username);
+						// Reply to the user with the stock price.
 						replyTweet(twitter, finalTweet);
+						
 					}
 
 				}
@@ -142,15 +162,7 @@ public class TwitterBot {
 
 		BigDecimal price = stock.getQuote().getPrice(); // the price of the stock
 		
-		String response = "@" + username + " STOCK NAME: " + stockName + " price = $" + price; 
-
-		// If the response is already in the list, we will not tweet to them.
-		if(allResponses.contains(response)) {
-			return null;
-		}
-		
-		// add the response to the array list to keep track of the username replied and the stock price.
-		allResponses.add(response);
+		String response =  stockName + " is $" + price + "   @" + username; 
 		
 		return response;
 		
